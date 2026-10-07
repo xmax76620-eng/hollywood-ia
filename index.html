@@ -574,7 +574,6 @@ html+='<div class="queue-item '+cls+'"><div class="q-icon">'+icon+'</div><div cl
 });
 queueEl.innerHTML=html;
 }
-
 function addToGallery(videoUrl,label){
 var galleryEl=document.getElementById('gallery');
 var galleryGrid=document.getElementById('gallery-grid');
@@ -584,11 +583,22 @@ el.className='gallery-item';
 var html='<video controls preload="metadata" muted playsinline><source src="'+videoUrl+'" type="video/mp4"></video>';
 html+='<div class="g-caption">'+esc(label)+'</div>';
 html+='<div class="g-actions">';
-html+='<button class="g-download" data-url="'+videoUrl+'">💾 Télécharger</button>';
+html+='<button class="g-download" data-url="'+videoUrl+'">💾 Enregistrer</button>';
 html+='<button class="g-tiktok" data-url="'+videoUrl+'" data-label="'+esc(label)+'">📱 TikTok</button>';
 html+='</div>';
 el.innerHTML=html;
 galleryGrid.appendChild(el);
+}
+
+function saveVideoToPhotos(videoUrl){
+var newWindow=window.open(videoUrl,'_blank');
+if(!newWindow){
+showToast('Autorisez les pop-ups dans Safari','warn');
+return;
+}
+setTimeout(function(){
+showToast('Appui long sur la vidéo → Enregistrer la vidéo','success');
+},800);
 }
 
 function openTikTokPreview(videoUrl,label){
@@ -825,10 +835,8 @@ if(tiktokPublish)tiktokPublish.addEventListener('click',publishToTikTok);
 document.getElementById('gallery-grid').addEventListener('click',function(e){
 var t=e.target;
 if(t.classList.contains('g-download')){
-var url=t.dataset.url;
-var a=document.createElement('a');a.href=url;a.download='hollywood-'+Date.now()+'.mp4';a.target='_blank';
-document.body.appendChild(a);a.click();document.body.removeChild(a);
-showToast('Téléchargement lancé','success');
+saveVideoToPhotos(t.dataset.url);
+}
 }
 if(t.classList.contains('g-tiktok')){
 openTikTokPreview(t.dataset.url,t.dataset.label||'');
